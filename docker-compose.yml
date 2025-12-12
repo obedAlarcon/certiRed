@@ -6,7 +6,7 @@ services:
     environment:
       - POSTGRES_USER=obed
       - POSTGRES_PASSWORD=obed2025@
-      - POSTGRES_DB=certiRed
+      - POSTGRES_DB=certired
     ports:
       - "5432:5432"
     volumes:

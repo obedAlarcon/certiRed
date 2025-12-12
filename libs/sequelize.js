@@ -29,9 +29,11 @@ if (isProduction) {
   const PASSWORD = encodeURIComponent(config.dbPassword);
   const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
   
+console.log('URI de conexión:', URI);
+  
   sequelize = new Sequelize(URI, {
     dialect: 'postgres',
-    logging: false,
+    logging: true,
   });
 }
 

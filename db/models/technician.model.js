@@ -7,19 +7,19 @@ const TECHNICIAN_TABLE ='technician';
 const TechnicianSchema ={
     id:{
         allowNull:false,
-        types:DataTypes.INTEGER,
+        type:DataTypes.INTEGER,
         primaryKey:true,
         autoIncrement:true,
     },
 
     userId:{
         allowNull:false,
-        types:DataTypes.INTEGER,
+        type:DataTypes.INTEGER,
         field:'user_id'
     },
     type:{
         allowNull:false,
-        types:DataTypes.STRING
+        type:DataTypes.STRING
     },
     profile:{
         allowNull:false,
