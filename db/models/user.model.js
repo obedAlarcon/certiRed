@@ -1,4 +1,5 @@
-const {Sequelize, Model}= require('sequelize');
+const { types } = require('joi');
+const {Sequelize, Model, DataTypes}= require('sequelize');
 
 
 const USER_TABLE = 'user';
@@ -6,7 +7,7 @@ const USER_TABLE = 'user';
 const UserSchema={
     id:{
         AllowNull:false,
-        type:DataTypes. INTEGER,
+        type :DataTypes.INTEGER,
         autoIncrement:true,
         primaryKey:true,
 
@@ -18,7 +19,7 @@ const UserSchema={
     },
     email:{
         AllowNull:false,
-        DataTypes:STRING,
+       type: DataTypes.STRING,
         Unique:true
     },
     password:{

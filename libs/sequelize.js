@@ -1,64 +1,42 @@
-const express =require('express');
-
-const{getUserSchema,updateUserSchema,createUserSchema}=require('./../schemas/userSchema');
-const UserService = require('../../portafolio/portafolio/services/user.service');
-const router=express.Router();
 
 
-const service = new UserService();
 
+const {Sequelize}=require('sequelize');
+const {config}=require('./../config/config');
+const setupModels = require('./../db/models');
 
-router.get('/', async(req, res, next)=>{
-    try {
-        const user= await service.find();
-        res.json(user);
-    } catch (error) {
-        next(error);
-    }
-})
+const isProduction = config.env === 'production';
 
-router.get('/:id', async(req, res,next)=>{
-    try {
-        const {id}=req.params;
-        const user= await service.findOne(id);
-        res.json(user)
-    } catch (error) {
-        next(error)
-    }
-})
+let sequelize;
 
+if (isProduction) {
+  //  PRODUCCIÓN (Render)
+  console.log('🔌 Conectando a base de datos en Render...');
+  sequelize = new Sequelize(config.databaseUrl, {
+    dialect: 'postgres',
+    logging: false,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
+  });
+} else {
+  // 💻 LOCAL
+  console.log('💻 Conectando a base de datos local...');
+  const USER = encodeURIComponent(config.dbUser);
+  const PASSWORD = encodeURIComponent(config.dbPassword);
+  const URI = `postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+  
+  sequelize = new Sequelize(URI, {
+    dialect: 'postgres',
+    logging: false,
+  });
+}
 
-router.post('/',async( req, res, next)=>{
-    try {
-        const body=req.body;
-        const newUser= await service.create(body);
-       res.status(201).json(newUser);
-
-    } catch (error) {
-        next(error);
-    }
-})
-
-
-router.patch('/:id',async(req, res,next)=>{
-    try {
-        const {id}=req.params;
-        const body=req.body;
-        const user= await service.update(id,body);
-        res.json(user)
-    } catch (error) {
-        next(error);
-    }
-})
-
-router.delete('/:id',async(req,res,next)=>{
-    try {
-        const {id}=req.params;
-        await service.delete(id);
-        res.status(201).json(id);
-    } catch (error) {
-        next(error);
-    }
-})
-
-module.exports=router;
+setupModels(sequelize);
+sequelize.authenticate()
+  .then(() => console.log('🟢 Conexión a la base de datos exitosa'))
+  .catch(err => console.error('❌ Error al conectar con la base de datos:', err));
+module.exports = sequelize;
